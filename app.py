@@ -1,22 +1,12 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import plotly.express as px
-import plotly.graph_objects as go
 
-from data_processor import load_data, preprocess_data
-from ml_models import PropertyValuationModel
-from investment_analyzer import calculate_roi, calculate_rental_yield
-from market_analyzer import analyze_market_trends, compare_properties
-from property_recommender import recommend_properties
-from visualization import (
-    create_price_distribution_chart, 
-    create_market_trends_chart,
-    create_property_comparison_chart,
-    create_investment_analysis_chart,
-    create_heatmap
-)
-from utils import format_currency, calculate_monthly_mortgage, format_percentage
+from pages.home import show as show_home
+from pages.valuation import show as show_valuation
+from pages.investment import show as show_investment
+from pages.market_trends import show as show_market_trends
+from utils.data_loader import load_real_estate_data
 
 # Page configuration
 st.set_page_config(
@@ -39,6 +29,9 @@ if 'user_preferences' not in st.session_state:
         'location': 'All'
     }
 
+# Load data
+df = load_real_estate_data()
+
 # Main title and description
 st.title("🏠 Real Estate Analytics Platform")
 st.markdown("""
@@ -46,75 +39,22 @@ st.markdown("""
     Use machine learning models to make informed real estate decisions.
 """)
 
-# Sidebar for user inputs and navigation
+# Sidebar for navigation
 st.sidebar.title("Navigation")
 page = st.sidebar.radio(
     "Select a Page",
-    ["Home", "Property Valuation", "Investment Analysis", "Market Trends", "Property Comparison", "Recommendations"]
+    ["Home", "Property Valuation", "Investment Analysis", "Market Trends"]
 )
 
-# Load and preprocess data
-df = load_data()
-df = preprocess_data(df)
-
-# User preference filters in sidebar
-st.sidebar.title("Filters")
-locations = ['All'] + sorted(df['location'].unique().tolist())
-selected_location = st.sidebar.selectbox("Location", locations, index=0)
-
-price_min = int(df['price'].min())
-price_max = int(df['price'].max())
-price_range = st.sidebar.slider(
-    "Price Range ($)",
-    price_min,
-    price_max,
-    (st.session_state.user_preferences['budget_min'], st.session_state.user_preferences['budget_max'])
-)
-st.session_state.user_preferences['budget_min'] = price_range[0]
-st.session_state.user_preferences['budget_max'] = price_range[1]
-
-property_types = ['All'] + sorted(df['property_type'].unique().tolist())
-selected_property_type = st.sidebar.selectbox(
-    "Property Type",
-    property_types,
-    index=property_types.index(st.session_state.user_preferences['property_type']) if st.session_state.user_preferences['property_type'] in property_types else 0
-)
-st.session_state.user_preferences['property_type'] = selected_property_type
-
-bedrooms = sorted(df['bedrooms'].unique().tolist())
-selected_bedrooms = st.sidebar.selectbox(
-    "Bedrooms",
-    bedrooms,
-    index=bedrooms.index(st.session_state.user_preferences['bedrooms']) if st.session_state.user_preferences['bedrooms'] in bedrooms else 0
-)
-st.session_state.user_preferences['bedrooms'] = selected_bedrooms
-
-bathrooms = sorted(df['bathrooms'].unique().tolist())
-selected_bathrooms = st.sidebar.selectbox(
-    "Bathrooms",
-    bathrooms,
-    index=bathrooms.index(st.session_state.user_preferences['bathrooms']) if st.session_state.user_preferences['bathrooms'] in bathrooms else 0
-)
-st.session_state.user_preferences['bathrooms'] = selected_bathrooms
-
-# Filter the data based on user selections
-filtered_df = df.copy()
-
-if selected_location != 'All':
-    filtered_df = filtered_df[filtered_df['location'] == selected_location]
-    
-filtered_df = filtered_df[
-    (filtered_df['price'] >= price_range[0]) &
-    (filtered_df['price'] <= price_range[1])
-]
-
-if selected_property_type != 'All':
-    filtered_df = filtered_df[filtered_df['property_type'] == selected_property_type]
-    
-filtered_df = filtered_df[
-    (filtered_df['bedrooms'] == selected_bedrooms) &
-    (filtered_df['bathrooms'] == selected_bathrooms)
-]
+# Display the selected page
+if page == "Home":
+    show_home()
+elif page == "Property Valuation":
+    show_valuation()
+elif page == "Investment Analysis":
+    show_investment()
+elif page == "Market Trends":
+    show_market_trends()
 
 # Home page
 if page == "Home":

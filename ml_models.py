@@ -183,21 +183,42 @@ class PropertyValuationModel:
         else:
             features_df = features.copy()
         
-        # Get numerical features for similarity calculation
-        numerical_cols = [col for col in self.numerical_features if col in df.columns]
+        # Calculate property_age if year_built exists but property_age doesn't
+        if 'year_built' in df.columns and 'property_age' not in df.columns:
+            current_year = pd.Timestamp.now().year
+            df = df.copy()  # Create a copy to avoid modifying the original
+            df['property_age'] = current_year - df['year_built']
         
+        if 'year_built' in features_df.columns and 'property_age' not in features_df.columns:
+            current_year = pd.Timestamp.now().year
+            features_df['property_age'] = current_year - features_df['year_built']
+        
+        # Get numerical features that exist in both dataframes
+        available_numerical_cols = [col for col in self.numerical_features 
+                                   if col in df.columns and col in features_df.columns]
+        
+        if not available_numerical_cols:
+            # Fall back to basic features if none of the preferred numerical features are available
+            available_numerical_cols = [col for col in df.columns 
+                                      if df[col].dtype in ['int64', 'float64'] 
+                                      and col in features_df.columns][:3]  # Use the first 3 numeric columns
+            
+        if not available_numerical_cols:
+            # If still no matching numerical columns, return random properties
+            return df.sample(min(n, len(df)))
+            
         # Scale numerical features
         scaler = StandardScaler()
         df_scaled = pd.DataFrame(
-            scaler.fit_transform(df[numerical_cols]),
-            columns=numerical_cols,
+            scaler.fit_transform(df[available_numerical_cols]),
+            columns=available_numerical_cols,
             index=df.index
         )
         
         # Scale input features
         features_scaled = pd.DataFrame(
-            scaler.transform(features_df[numerical_cols]),
-            columns=numerical_cols
+            scaler.transform(features_df[available_numerical_cols]),
+            columns=available_numerical_cols
         )
         
         # Calculate Euclidean distance
