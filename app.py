@@ -128,29 +128,72 @@ if not getattr(st.session_state.valuation_model, 'trained', False):
 # Store data in session state for easy access
 st.session_state.df = df
 
-# Custom CSS for navigation
+# Custom CSS for responsive design and navigation
 st.markdown("""
     <style>
-    .nav-link {
-        padding: 0.5rem 1rem;
+    /* Responsive layout */
+    .stApp {
+        max-width: 100%;
+        padding: 1rem;
+        box-sizing: border-box;
+    }
+    
+    /* Sidebar responsiveness */
+    .css-1d391kg {
+        width: 100%;
+        max-width: 300px;
+    }
+    
+    /* Navigation buttons */
+    .stButton>button {
+        width: 100%;
+        min-height: 3rem;
+        margin: 0.25rem 0;
+        background: white;
         color: #1F1F1F;
-        text-decoration: none;
+        border: 1px solid #E0E0E0;
         border-radius: 0.5rem;
         transition: all 0.3s ease;
-        margin: 0.5rem 0;
-        display: block;
-        background: transparent;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        padding: 0.5rem 1rem;
+        font-size: 1rem;
+        font-family: 'Lexend', sans-serif;
     }
-    .nav-link:hover {
+    
+    .stButton>button:hover {
         background: rgba(255, 75, 75, 0.1);
-        transform: translateX(10px);
+        transform: translateX(5px);
+        border-color: #FF4B4B;
     }
-    .nav-link.active {
+    
+    .stButton>button.active {
         background: #FF4B4B;
-        color: white !important;
+        color: white;
+        border-color: #FF4B4B;
     }
+    
+    /* Icons in buttons */
     .nav-icon {
-        margin-right: 0.5rem;
+        margin-right: 0.75rem;
+        font-size: 1.2rem;
+    }
+    
+    /* Mobile responsiveness */
+    @media (max-width: 768px) {
+        .stApp {
+            padding: 0.5rem;
+        }
+        
+        .css-1d391kg {
+            max-width: 100%;
+        }
+        
+        .stButton>button {
+            min-height: 2.5rem;
+            font-size: 0.9rem;
+        }
     }
     </style>
 """, unsafe_allow_html=True)
@@ -172,9 +215,22 @@ with st.sidebar:
         'Investment Analysis': '📊'
     }
     
+    # Create navigation buttons
     for page, icon in pages.items():
-        active_class = 'active' if st.session_state.nav_page == page else ''
-        if st.button(f"{icon} {page}", key=f"nav_{page}", use_container_width=True):
+        # Create unique key for each button
+        button_key = f"nav_{page.lower().replace(' ', '_')}"
+        
+        # Check if this is the active page
+        is_active = st.session_state.nav_page == page
+        
+        # Create button with conditional styling
+        if st.button(
+            f"{icon} {page}",
+            key=button_key,
+            help=f"Navigate to {page}",
+            use_container_width=True,
+            type="primary" if is_active else "secondary"
+        ):
             st.session_state.nav_page = page
             st.rerun()
 
