@@ -104,13 +104,65 @@ if not getattr(st.session_state.valuation_model, 'trained', False):
 # Store data in session state for easy access
 st.session_state.df = df
 
-# Main title and description
-st.title("🏠 Real Estate Analytics Platform")
+# Custom CSS for navigation
 st.markdown("""
-    An AI-powered platform for property valuation, investment analysis, and market insights.
-    Use machine learning models to make informed real estate decisions.
-""")
+    <style>
+    .nav-link {
+        padding: 0.5rem 1rem;
+        color: #1F1F1F;
+        text-decoration: none;
+        border-radius: 0.5rem;
+        transition: all 0.3s ease;
+        margin: 0.5rem 0;
+        display: block;
+        background: transparent;
+    }
+    .nav-link:hover {
+        background: rgba(255, 75, 75, 0.1);
+        transform: translateX(10px);
+    }
+    .nav-link.active {
+        background: #FF4B4B;
+        color: white !important;
+    }
+    .nav-icon {
+        margin-right: 0.5rem;
+    }
+    </style>
+""", unsafe_allow_html=True)
 
+# Initialize navigation if not in session state
+if 'nav_page' not in st.session_state:
+    st.session_state.nav_page = 'Home'
 
-# Display the selected page
-show_market_trends()
+# Sidebar navigation
+with st.sidebar:
+    st.title("Navigation")
+    st.markdown("---")
+    
+    # Navigation links with icons
+    pages = {
+        'Home': '🏠',
+        'Market Trends': '📈',
+        'Property Valuation': '💰',
+        'Investment Analysis': '📊'
+    }
+    
+    for page, icon in pages.items():
+        active_class = 'active' if st.session_state.nav_page == page else ''
+        if st.markdown(f"""
+            <div class="nav-link {active_class}">
+                <span class="nav-icon">{icon}</span> {page}
+            </div>
+            """, unsafe_allow_html=True):
+            st.session_state.nav_page = page
+
+# Main content area
+if st.session_state.nav_page == 'Home':
+    show_home()
+elif st.session_state.nav_page == 'Market Trends':
+    show_market_trends()
+elif st.session_state.nav_page == 'Property Valuation':
+    show_valuation()
+elif st.session_state.nav_page == 'Investment Analysis':
+    show_investment()
