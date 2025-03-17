@@ -18,6 +18,10 @@ def generate_property_data(num_properties=500):
     np.random.seed(42)
     random.seed(42)
     
+    # Define cities and states
+    cities = ['New York', 'Los Angeles', 'Chicago', 'Houston', 'Phoenix', 'Philadelphia', 'San Antonio', 'San Diego', 'Dallas', 'San Jose']
+    states = ['NY', 'CA', 'IL', 'TX', 'AZ', 'PA', 'TX', 'CA', 'TX', 'CA']
+    
     # Define locations with their relative price levels
     locations = {
         'Downtown': 1.5,          # Higher price multiplier
@@ -44,8 +48,17 @@ def generate_property_data(num_properties=500):
     # Generate property IDs
     property_ids = list(range(1, num_properties + 1))
     
-    # Generate random property locations
+    # Generate random property locations (neighborhoods)
     property_locations = np.random.choice(list(locations.keys()), size=num_properties, p=[0.15, 0.15, 0.1, 0.1, 0.1, 0.1, 0.1, 0.05, 0.1, 0.05])
+    
+    # Generate random city/state combinations
+    # Each property will be in one of our cities
+    city_indices = np.random.randint(0, len(cities), size=num_properties)
+    property_cities = [cities[i] for i in city_indices]
+    property_states = [states[i] for i in city_indices]
+    
+    # Generate random zip codes
+    zip_codes = np.random.randint(10000, 99999, size=num_properties)
     
     # Generate random property types
     property_types_list = np.random.choice(list(property_types.keys()), size=num_properties, p=[0.5, 0.2, 0.15, 0.1, 0.05])
@@ -111,7 +124,7 @@ def generate_property_data(num_properties=500):
     # Create DataFrame
     property_data = pd.DataFrame({
         'property_id': property_ids,
-        'location': property_locations,
+        'location': property_locations,  # This is the neighborhood
         'property_type': property_types_list,
         'bedrooms': bedrooms,
         'bathrooms': bathrooms,
@@ -122,7 +135,11 @@ def generate_property_data(num_properties=500):
         'price_per_sqft': price_per_sqft,
         'estimated_monthly_rent': estimated_monthly_rent,
         'days_on_market': days_on_market,
-        'estimated_roi': estimated_roi
+        'estimated_roi': estimated_roi,
+        'city': property_cities,
+        'state': property_states,
+        'zip_code': zip_codes,
+        'neighborhood': property_locations  # Add neighborhood as a separate column
     })
     
     # Add some additional features for a subset of properties
