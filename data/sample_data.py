@@ -60,6 +60,32 @@ def generate_property_data(num_properties=500):
     # Generate random zip codes
     zip_codes = np.random.randint(10000, 99999, size=num_properties)
     
+    # Generate latitude and longitude based on city
+    # These are approximate coordinates for the cities
+    city_coordinates = {
+        'New York': (40.7128, -74.0060),
+        'Los Angeles': (34.0522, -118.2437),
+        'Chicago': (41.8781, -87.6298),
+        'Houston': (29.7604, -95.3698),
+        'Phoenix': (33.4484, -112.0740),
+        'Philadelphia': (39.9526, -75.1652),
+        'San Antonio': (29.4241, -98.4936),
+        'San Diego': (32.7157, -117.1611),
+        'Dallas': (32.7767, -96.7970),
+        'San Jose': (37.3382, -121.8863)
+    }
+    
+    latitudes = []
+    longitudes = []
+    
+    for city in property_cities:
+        base_lat, base_lon = city_coordinates[city]
+        # Add some random variation within the city (approximately within a few miles)
+        lat = base_lat + np.random.uniform(-0.05, 0.05)
+        lon = base_lon + np.random.uniform(-0.05, 0.05)
+        latitudes.append(lat)
+        longitudes.append(lon)
+    
     # Generate random property types
     property_types_list = np.random.choice(list(property_types.keys()), size=num_properties, p=[0.5, 0.2, 0.15, 0.1, 0.05])
     
@@ -139,7 +165,9 @@ def generate_property_data(num_properties=500):
         'city': property_cities,
         'state': property_states,
         'zip_code': zip_codes,
-        'neighborhood': property_locations  # Add neighborhood as a separate column
+        'neighborhood': property_locations,  # Add neighborhood as a separate column
+        'latitude': latitudes,
+        'longitude': longitudes
     })
     
     # Add some additional features for a subset of properties
