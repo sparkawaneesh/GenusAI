@@ -42,7 +42,31 @@ hide_menu_style = """
     }
     </style>
 """
-st.markdown(hide_menu_style, unsafe_allow_html=True)
+# Custom fonts CSS
+font_css = """
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Lexend:wght@400;500&display=swap');
+    
+    html, body, [class*="css"] {
+        font-family: 'Lexend', sans-serif;
+    }
+    
+    h1, h2, h3, h4, h5, h6, .st-emotion-cache-1629p8f h1 {
+        font-family: 'Poppins', sans-serif !important;
+        font-weight: 600 !important;
+    }
+    
+    .st-emotion-cache-10trblm {
+        font-family: 'Poppins', sans-serif !important;
+        font-weight: 600 !important;
+    }
+    
+    .st-emotion-cache-1egp75f {
+        font-family: 'Poppins', sans-serif !important;
+    }
+    </style>
+"""
+st.markdown(font_css + hide_menu_style, unsafe_allow_html=True)
 
 
 # Initialize session state
