@@ -4,5 +4,11 @@ version = "0.1.0"
 description = "Add your description here"
 requires-python = ">=3.11"
 dependencies = [
+    "djaodjin-pages>=0.8.3",
+    "numpy>=2.2.4",
+    "pandas>=2.2.3",
+    "plotly>=6.0.0",
+    "scikit-learn>=1.6.1",
     "streamlit>=1.43.2",
+    "xgboost>=3.0.0",
 ]
