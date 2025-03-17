@@ -174,12 +174,9 @@ with st.sidebar:
     
     for page, icon in pages.items():
         active_class = 'active' if st.session_state.nav_page == page else ''
-        if st.markdown(f"""
-            <div class="nav-link {active_class}">
-                <span class="nav-icon">{icon}</span> {page}
-            </div>
-            """, unsafe_allow_html=True):
+        if st.button(f"{icon} {page}", key=f"nav_{page}", use_container_width=True):
             st.session_state.nav_page = page
+            st.rerun()
 
 # Main content area
 if st.session_state.nav_page == 'Home':
