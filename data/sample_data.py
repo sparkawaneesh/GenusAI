@@ -148,7 +148,8 @@ def generate_property_data(num_properties=500):
     current_date = datetime.now()
     date_listed = []
     for dom in days_on_market:
-        list_date = current_date - timedelta(days=dom)
+        # Convert numpy.int64 to regular Python int for timedelta
+        list_date = current_date - timedelta(days=int(dom))
         date_listed.append(list_date)
     
     property_data['date_listed'] = date_listed
