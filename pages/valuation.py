@@ -16,7 +16,9 @@ def show():
     # Initialize or load valuation model
     if 'valuation_model' not in st.session_state:
         st.session_state.valuation_model = PropertyValuationModel()
-        
+    
+    # Make sure the model is trained
+    if not getattr(st.session_state.valuation_model, 'trained', False):
         if not df.empty and 'price' in df.columns:
             with st.spinner("Training valuation model..."):
                 metrics = st.session_state.valuation_model.train(df, model_type='xgboost')
