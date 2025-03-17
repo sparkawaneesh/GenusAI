@@ -21,9 +21,3 @@ showSidebarNavigation = true
 [runner]
 fastReruns = true
 enableXsrfProtection = false
-
-[browser]
-gatherUsageStats = false
-
-[client]
-toolbarMode = "minimal"
