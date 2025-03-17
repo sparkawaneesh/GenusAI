@@ -780,27 +780,32 @@ def show_investment_property_finder(df):
                                         # Close the polygon
                                         values.append(values[0])
                                         categories_closed = categories + [categories[0]]
-                            
-                            fig.add_trace(go.Scatterpolar(
-                                r=values,
-                                theta=categories_closed,
-                                fill='toself',
-                                name=f"Property {i+1}"
-                            ))
-                        
-                        fig.update_layout(
-                            polar=dict(
-                                radialaxis=dict(
-                                    visible=True,
-                                    range=[0, 1]
-                                )
-                            ),
-                            showlegend=True,
-                            height=400,
-                            margin=dict(l=40, r=40, t=20, b=20)
-                        )
-                        
-                        st.plotly_chart(fig, use_container_width=True)
+                                        
+                                        # Add trace for this property
+                                        fig.add_trace(go.Scatterpolar(
+                                            r=values,
+                                            theta=categories_closed,
+                                            fill='toself',
+                                            name=f"Property {i+1}"
+                                        ))
+                                
+                                # Only update layout and display chart if we added traces
+                                if hasattr(fig, 'data') and len(fig.data) > 0:
+                                    fig.update_layout(
+                                        polar=dict(
+                                            radialaxis=dict(
+                                                visible=True,
+                                                range=[0, 1]
+                                            )
+                                        ),
+                                        showlegend=True,
+                                        height=400,
+                                        margin=dict(l=40, r=40, t=20, b=20)
+                                    )
+                                    
+                                    st.plotly_chart(fig, use_container_width=True)
+                                else:
+                                    st.info("Unable to generate radar chart with available metrics.")
                     
                     # Display table with all properties
                     st.markdown("#### All Matching Properties")
@@ -904,8 +909,13 @@ def show_mortgage_calculator():
         )
         
         # Add taxes and insurance if selected
-        monthly_tax = annual_property_tax / 12 if include_taxes_insurance else 0
-        monthly_insurance = annual_insurance / 12 if include_taxes_insurance else 0
+        monthly_tax = 0
+        monthly_insurance = 0
+        
+        if include_taxes_insurance and 'annual_property_tax' in locals() and 'annual_insurance' in locals():
+            monthly_tax = annual_property_tax / 12
+            monthly_insurance = annual_insurance / 12
+            
         total_monthly_payment = monthly_payment + monthly_tax + monthly_insurance
         
         # Display payment summary
