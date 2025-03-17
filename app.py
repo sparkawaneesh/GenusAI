@@ -16,7 +16,7 @@ from visualization import (
     create_investment_analysis_chart,
     create_heatmap
 )
-from utils import format_currency
+from utils import format_currency, calculate_monthly_mortgage, format_percentage
 
 # Page configuration
 st.set_page_config(

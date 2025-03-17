@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import os
 import streamlit as st
+from data.sample_data import generate_property_data
 
 # Cache the data loading to improve performance
 @st.cache_data
@@ -15,8 +16,17 @@ def load_real_estate_data():
     try:
         # Load data from local file
         data_path = os.path.join('data', 'sample_real_estate_data.csv')
-        df = pd.read_csv(data_path)
         
+        # Check if file exists and has data
+        if os.path.exists(data_path) and os.path.getsize(data_path) > 100:  # Some small size check
+            df = pd.read_csv(data_path)
+        else:
+            # Generate sample data
+            st.info("Generating sample real estate data...")
+            df = generate_property_data(num_properties=500)
+            # Save to CSV for future use
+            df.to_csv(data_path, index=False)
+            
         # Perform basic data cleaning
         df = clean_data(df)
         return df
