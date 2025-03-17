@@ -75,7 +75,7 @@ def show_quick_valuation(df):
     if submit_button:
         with st.spinner("Calculating property value..."):
             try:
-                # Create property dataframe
+                # Create property dataframe with only required columns
                 property_data = pd.DataFrame({
                     'city': [selected_city],
                     'property_type': [property_type],
@@ -83,10 +83,7 @@ def show_quick_valuation(df):
                     'bathrooms': [bathrooms],
                     'sqft': [sqft],
                     'year_built': [year_built],
-                    'lot_size': [lot_size],
-                    'days_on_market': [0],  # placeholder
-                    'latitude': [0],         # placeholder
-                    'longitude': [0]         # placeholder
+                    'lot_size': [lot_size]
                 })
                 
                 # Get base value prediction
