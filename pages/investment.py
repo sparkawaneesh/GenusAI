@@ -721,33 +721,65 @@ def show_investment_property_finder(df):
                     st.markdown("#### Investment Metrics Comparison")
                     
                     # Prepare data for radar chart
-                    if not top_properties.empty and all(col in top_properties.columns for col in ['cap_rate', 'cash_on_cash_return', 'price_to_rent_ratio']):
-                        # Normalize metrics for radar chart
-                        metrics_df = top_properties[['price', 'cap_rate', 'cash_on_cash_return', 'grm']].copy()
+                    if not top_properties.empty and len(top_properties) > 0:
+                        # Check which columns are available
+                        available_metrics = []
+                        metric_names = []
                         
-                        # Flip GRM so lower is better (like price_to_rent_ratio)
-                        metrics_df['grm_inverted'] = 1 / metrics_df['grm']
-                        
-                        # Normalize to 0-1 scale
-                        for col in ['cap_rate', 'cash_on_cash_return', 'grm_inverted']:
-                            if metrics_df[col].max() > metrics_df[col].min():
-                                metrics_df[col] = (metrics_df[col] - metrics_df[col].min()) / (metrics_df[col].max() - metrics_df[col].min())
-                        
-                        # Prepare for radar chart
-                        categories = ['Cap Rate', 'Cash on Cash', 'Rent Multiplier']
-                        
-                        fig = go.Figure()
-                        
-                        for i, (_, prop) in enumerate(top_properties.iterrows()):
-                            values = [
-                                metrics_df.iloc[i]['cap_rate'],
-                                metrics_df.iloc[i]['cash_on_cash_return'],
-                                metrics_df.iloc[i]['grm_inverted']
-                            ]
+                        # Check for cap rate
+                        if 'cap_rate' in top_properties.columns:
+                            available_metrics.append('cap_rate')
+                            metric_names.append('Cap Rate')
                             
-                            # Close the polygon
-                            values.append(values[0])
-                            categories_closed = categories + [categories[0]]
+                        # Check for cash on cash return
+                        if 'cash_on_cash_return' in top_properties.columns:
+                            available_metrics.append('cash_on_cash_return')
+                            metric_names.append('Cash on Cash')
+                            
+                        # Check for GRM
+                        grm_available = 'grm' in top_properties.columns
+                        if grm_available:
+                            available_metrics.append('grm_inverted')
+                            metric_names.append('Rent Multiplier')
+                        
+                        # Only proceed if we have metrics to show
+                        if available_metrics and len(available_metrics) > 0:
+                            # Create metrics dataframe with available columns
+                            metrics_cols = ['price'] + [col for col in available_metrics if col != 'grm_inverted']
+                            if grm_available:
+                                metrics_cols.append('grm')
+                            
+                            metrics_df = top_properties[metrics_cols].copy()
+                            
+                            # Add inverted GRM if available
+                            if grm_available:
+                                # Flip GRM so lower is better (like price_to_rent_ratio)
+                                metrics_df['grm_inverted'] = 1 / metrics_df['grm']
+                            
+                            # Normalize to 0-1 scale
+                            for col in available_metrics:
+                                if col in metrics_df.columns and metrics_df[col].max() > metrics_df[col].min():
+                                    metrics_df[col] = (metrics_df[col] - metrics_df[col].min()) / (metrics_df[col].max() - metrics_df[col].min())
+                        
+                        # Check if we have metrics to show
+                        if available_metrics and metric_names and len(available_metrics) > 0:
+                            # Prepare for radar chart
+                            categories = metric_names
+                            fig = go.Figure()
+                            
+                            # Make sure metrics_df is defined
+                            if 'metrics_df' in locals() and not metrics_df.empty:
+                                for i, (_, prop) in enumerate(top_properties.iterrows()):
+                                    # Get values for available metrics
+                                    values = []
+                                    for metric in available_metrics:
+                                        if metric in metrics_df.columns:
+                                            values.append(metrics_df.iloc[i][metric])
+                                    
+                                    if values:
+                                        # Close the polygon
+                                        values.append(values[0])
+                                        categories_closed = categories + [categories[0]]
                             
                             fig.add_trace(go.Scatterpolar(
                                 r=values,
