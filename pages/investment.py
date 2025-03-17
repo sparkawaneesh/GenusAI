@@ -767,8 +767,25 @@ def show_investment_property_finder(df):
                             categories = metric_names
                             fig = go.Figure()
                             
-                            # Make sure metrics_df is defined
-                            if 'metrics_df' in locals() and not metrics_df.empty:
+                            # Initialize metrics_df if not already done
+                            metrics_df = pd.DataFrame()
+                            
+                            # Create metrics_df with normalized values
+                            if not top_properties.empty:
+                                # Calculate metrics for each property
+                                metrics_data = []
+                                for _, prop in top_properties.iterrows():
+                                    prop_metrics = {}
+                                    # Add available metrics
+                                    for metric in available_metrics:
+                                        prop_metrics[metric] = prop[metric] if metric in prop else 0
+                                    metrics_data.append(prop_metrics)
+                                
+                                # Create DataFrame
+                                metrics_df = pd.DataFrame(metrics_data)
+                            
+                            # Make sure metrics_df is defined and not empty
+                            if not metrics_df.empty:
                                 for i, (_, prop) in enumerate(top_properties.iterrows()):
                                     # Get values for available metrics
                                     values = []
