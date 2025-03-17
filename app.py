@@ -12,11 +12,38 @@ from models.investment_analysis import InvestmentAnalysis
 
 # Page configuration
 st.set_page_config(
-    page_title="Real Estate Analytics Platform",
+    page_title="Real Estate Analytics",
     page_icon="🏠",
     layout="wide",
     initial_sidebar_state="expanded"
 )
+
+# Hide default menu and footer
+hide_menu_style = """
+    <style>
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    .stApp {
+        transition: all 0.3s ease-in-out;
+    }
+    .stButton>button {
+        transition: all 0.3s ease;
+    }
+    .stButton>button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    .css-1d391kg {
+        animation: fadeIn 0.5s ease-in;
+    }
+    @keyframes fadeIn {
+        from {opacity: 0;}
+        to {opacity: 1;}
+    }
+    </style>
+"""
+st.markdown(hide_menu_style, unsafe_allow_html=True)
+
 
 # Initialize session state
 if 'selected_property' not in st.session_state:
@@ -34,7 +61,7 @@ if 'user_preferences' not in st.session_state:
 # Initialize models
 if 'valuation_model' not in st.session_state:
     st.session_state.valuation_model = PropertyValuationModel()
-    
+
 if 'investment_analysis' not in st.session_state:
     st.session_state.investment_analysis = InvestmentAnalysis()
 
@@ -84,19 +111,6 @@ st.markdown("""
     Use machine learning models to make informed real estate decisions.
 """)
 
-# Sidebar for navigation
-st.sidebar.title("Navigation")
-page = st.sidebar.radio(
-    "Select a Page",
-    ["Home", "Property Valuation", "Investment Analysis", "Market Trends"]
-)
 
 # Display the selected page
-if page == "Home":
-    show_home()
-elif page == "Property Valuation":
-    show_valuation()
-elif page == "Investment Analysis":
-    show_investment()
-elif page == "Market Trends":
-    show_market_trends()
+show_market_trends()
