@@ -76,6 +76,7 @@ def show_quick_valuation(df):
         with st.spinner("Calculating property value..."):
             try:
                 # Create property dataframe with only required columns
+                # Create property dataframe with all required columns
                 property_data = pd.DataFrame({
                     'city': [selected_city],
                     'property_type': [property_type],
@@ -83,7 +84,13 @@ def show_quick_valuation(df):
                     'bathrooms': [bathrooms],
                     'sqft': [sqft],
                     'year_built': [year_built],
-                    'lot_size': [lot_size]
+                    'lot_size': [lot_size],
+                    'days_on_market': [0],
+                    'latitude': [0],
+                    'longitude': [0],
+                    'neighborhood': [''],
+                    'state': [''],
+                    'zip_code': ['']
                 })
                 
                 # Get base value prediction
@@ -283,6 +290,7 @@ def show_detailed_valuation(df):
         with st.spinner("Calculating detailed property valuation..."):
             try:
                 # Create property dataframe for base prediction
+                # Create property dataframe with all required columns
                 property_data = pd.DataFrame({
                     'city': [selected_city],
                     'property_type': [property_type],
@@ -291,9 +299,12 @@ def show_detailed_valuation(df):
                     'sqft': [sqft],
                     'year_built': [year_built],
                     'lot_size': [lot_size],
-                    'days_on_market': [0],  # placeholder
-                    'latitude': [0],         # placeholder
-                    'longitude': [0]         # placeholder
+                    'days_on_market': [0],
+                    'latitude': [0],
+                    'longitude': [0],
+                    'neighborhood': [''],
+                    'state': [''],
+                    'zip_code': ['']
                 })
                 
                 # Get base value prediction

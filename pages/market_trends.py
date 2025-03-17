@@ -1260,8 +1260,17 @@ def show_market_indicators(df):
             city_metrics['price_per_sqft'] = city_metrics['price'] / city_metrics['sqft']
         
         # Rename columns
-        city_metrics.columns = ['City', 'Median Price', 'Avg. Days on Market' if 'days_on_market' in df.columns else 'Count', 
-                              'Median Sqft' if 'sqft' in df.columns else 'Count']
+        # Rename columns based on available data
+        new_columns = ['City', 'Median Price']
+        if 'days_on_market' in df.columns:
+            new_columns.append('Avg. Days on Market')
+        else:
+            new_columns.append('Count')
+        if 'sqft' in df.columns:
+            new_columns.append('Median Sqft')
+        else:
+            new_columns.append('Count')
+        city_metrics.columns = new_columns
         
         if 'price_per_sqft' in city_metrics.columns:
             city_metrics = city_metrics.rename(columns={'price_per_sqft': 'Price per Sqft'})
